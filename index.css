@@ -17,7 +17,8 @@ header {
 }
 
 .quiz-container {
-  width: 800px;
+  width: 840px;
+  height: 240px;
   padding: 20px;
   margin: 0 auto;
 
@@ -26,17 +27,89 @@ header {
   justify-content: space-around;
   background-color: white;
   border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
 }
-
-/*.quiz-element {
-  display: flexbox;
-}*/
 
 .quiz-image {
   width: 200px;
+  height: 200px;
   border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 15px;
+}
+
+.quiz-text-container {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.quiz-text {
+  font-size: 18px;
+}
+
+.quiz-text p {
+  margin: 0;
+}
+
+.quiz-options {
+  
+}
+
+.answer {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.quiz-options fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.quiz-options input {
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* Get progress and score to display on same line, at left and right sides */
+.quiz-info-container {
+  flex: 1;
+  position: relative;  
+}
+
+.answer-status-correct {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  background-color: lightgreen;
+}
+
+.answer-status-incorrect {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  background-color: lightcoral;
+}
+
+.quiz-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+.quiz-score {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .quiz-button {
@@ -44,4 +117,9 @@ header {
   height: 200px;
   border: 1px solid black;
   border-radius: 10px;
+  font-size: 30px;
+}
+
+.quiz-button:hover {
+  box-shadow: 0 0 11px rgba(0,0,0,.4);
 }

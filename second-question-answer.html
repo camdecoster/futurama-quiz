@@ -12,29 +12,28 @@
     <h1>Futurama Quiz</h1>
   </header>
   <main>
-    <form class="quiz-container" action="first-question.html">
+    <form class="quiz-container" action="final-screen.html">
       <div class="image-container quiz-element">
         <img class ="quiz-image" src="images/futurama_square.png" alt="Futurama logo">
       </div>      
       <div class="quiz-text-container quiz-element">
         <div id="js-quiz-text" class="quiz-text quiz-element">
-          <p>This is an interactive multiple choice quiz about the TV show Futurama. When you're ready to start the quiz, click the Start Quiz button.</p>
+          <p>What Planet Express employee is a decapodian?</p>
         </div>
-        <div id="js-quiz-options" class = "quiz-options">
-
+        <div id="js-quiz-options" class="quiz-options">
+          <p class="answer">Zoidberg</p>
         </div>
         <div class="quiz-info-container">
-          <span id="js-quiz-progress" class="quiz-progress">Question: 1 of 10</span>
+          <span id="js-answer-status" class="answer-status-incorrect">You got it wrong.</span>
+          <span id="js-quiz-progress" class="quiz-progress">Question: 2 of 10</span>
           <span id="js-quiz-score" class="quiz-score">Score: X out of Y</span>
         </div>
       </div>
       <div class="button-container quiz-element">
         <button type="submit" class="quiz-button">
-          <span id="js-button-text">Start Quiz</span>
+          <span id="js-button-text">Finish Quiz</span>
         </button>
-      </div>
-      
-      
+      </div>      
     </form>
   </main>
 <!--<script src="//code.jquery.com/jquery.min.js"></script>
