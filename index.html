@@ -12,28 +12,31 @@
     <h1>Futurama Quiz</h1>
   </header>
   <main>
-    <div class='quiz-container'>
-      <div class='image-container quiz-element'>
-        <img class ='quiz-image' src='images/futurama_square.png' alt='Futurama logo'>
+    <div class="quiz-container">
+      <div class="image-container quiz-element">
+        <img class ="quiz-image" src="images/futurama_square.png" alt="Futurama logo">
       </div>
-      <div>
-        <div class='quiz-text quiz-element'>
-          <p>This is an interactive multiple choice quiz about the TV show Futurama.</p>
+      <div class="quiz-text-container quiz-element">
+        <div id="js-quiz-text" class="quiz-text quiz-element">
+          <p>This is an interactive multiple choice quiz about the TV show Futurama. When you're ready to start the quiz, click the Start Quiz button.</p>
         </div>
-        <div class='quiz-score'>
-          <p>Question: 1 of 10</p>
-          <p>Score: X out of Y</p>
+        <div id="js-quiz-options" class = "quiz-element">
+
+        </div>
+        <div class="quiz-info-container">
+          <p id="js-quiz-progress" class="quiz-progress">Question: 1 of 10</p>
+          <p id="js-quiz-score" class="quiz-score">Score: X out of Y</p>
         </div>
       </div>
-      <div class='button-container quiz-element'>
-        <button class='quiz-button'>
-          <span>Start</span>
+      <div class="button-container quiz-element">
+        <button class="quiz-button">
+          <span id="js-button-text">Start Quiz</span>
         </button>
       </div>
       
     </div>
-</main>
+  </main>
 <script src="//code.jquery.com/jquery.min.js"></script>
-<script type="text/javascript" src="index.js"></script>
+<script src="index.js"></script>
 </body>
 </html>

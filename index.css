@@ -17,7 +17,8 @@ header {
 }
 
 .quiz-container {
-  width: 800px;
+  width: 840px;
+  height: 240px;
   padding: 20px;
   margin: 0 auto;
 
@@ -26,17 +27,35 @@ header {
   justify-content: space-around;
   background-color: white;
   border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
 }
-
-/*.quiz-element {
-  display: flexbox;
-}*/
 
 .quiz-image {
   width: 200px;
+  height: 200px;
   border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 15px;
+}
+
+.quiz-text-container {
+  width: 400px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Get progress and score to display on same line, at left and right sides */
+.quiz-info-container {
+  display: flex;
+}
+
+.quiz-progress {
+  left: 0;
+  bottom: 0;
+}
+
+.quiz-score {
+  right: 0;
+  bottom: 0;
 }
 
 .quiz-button {

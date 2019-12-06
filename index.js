@@ -32,6 +32,19 @@ const questionList = [
 function renderQuiz() {
     // Render the quiz in the DOM
     console.log('`renderQuiz` ran');
+    // Write code to populate html elements
+    const text = $('#js-quiz-text');
+    text.empty();
+    text.append(`
+        <p>What is the name of the show?</p>
+        <ol>
+        <li>Future Show</li>
+        <li>Futurella</li>
+        <li>Futurita</li>
+        <li>Futurama</li>
+        </ol>
+    `);
+
 }
 
 function changeImage() {
@@ -65,7 +78,12 @@ function quizComplete() {
 }
 
 function startQuiz() {
-    renderQuiz();
+    
+    //renderQuiz();
+    $('.quiz-button').on('click', function (event) {
+        console.log('Button clicked');
+        renderQuiz();
+    });
 
 }
 
