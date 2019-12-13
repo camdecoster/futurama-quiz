@@ -3,35 +3,58 @@
 function selectQuestion(questionId) {
     // This function will select a question from the question list
     console.log('`selectQuestion` ran');
+    
     return questionList.find(question => question.id === questionId);
 }
 
 function renderQuiz(question) {
     // Render the quiz in the DOM
     console.log('`renderQuiz` ran');
-
-    /*
-    NEED TO CLEAN THIS UP, ADD IMAGEALT TO CHANGEIMAGE CALLOUTS
-    */
+    
+    // Declare render variables to default values
+    let clear = false;
+    let imageName = question.questionImage;
+    let imageAlt = question.questionImageAlt;
+    let questionText = question.question;
+    let answerOptions = '';
+    let answerStatus = null;
+    let displayProgress = true;
+    let displayScore = true;
+    let buttonText = '';
+    let incrementCounter = false;
 
     // Check if starting the quiz
     if (quizCounter === 0) {
-        clearQuiz();
-        changeImage(question.questionImage);
-        changeQuestionText(question.question);
-        changeButtonText('Start Quiz');
-        quizCounter++;
+        // Set render variables
+        clear = true;
+        displayProgress = false;
+        displayScore = false;
+        buttonText = 'Start Quiz';
+        incrementCounter = true;
     }
     // Check if ending the quiz
     else if (quizCounter === 11) {
-        clearQuiz();
-        changeImage(question.questionImage);
+        // Set render variables
+        clear = true;
+        displayProgress = false;
+        displayScore = false;
+        buttonText = 'Restart Quiz';
 
         // Create final message with score
-        changeQuestionText(`Congratulations! You finished the quiz! You got ${quizScore} out of 10 answers correct. Press the button if you\'d like to try again.`);
-        changeButtonText('Restart Quiz');
-
-        // Reset counter and score to go back to start of quiz
+        questionText = `Congratulations! You finished the quiz! You got ${quizScore} out of 10 answers correct.`;
+        // Add sentence depending on the score
+        if (quizScore > 7) {
+            questionText += ' You sure know a lot about Futurama.';
+        }
+        else if (quizScore > 4) {
+            questionText += ' You\'ve seen this show before, but maybe you should watch it again.';
+        }
+        else {
+            questionText += ' You probably haven\'t seen this show before.';
+        }
+        questionText += ' Press the button if you\'d like to try again.';
+        
+        // Reset counter and score to prepare for restarting quiz
         quizCounter = 0;
         quizScore = 0;
     }
@@ -39,67 +62,75 @@ function renderQuiz(question) {
     else {
         // Check if question should be displayed
         if (isQuestion) {
-            clearQuiz();
-            changeImage(question.questionImage);
-            changeQuestionText(question.question);
-            changeAnswerOptions(question.options);
-            changeProgressText();
-            changeScoreText();
-            changeButtonText('Submit Answer');
+            // Set render variables
+            clear = true;
+            answerOptions = question.options;
+            buttonText = 'Submit Answer';
         }
-        // Otherwise, the answer check should be done
+        // Otherwise, the answer should be displayed and the answer check should be done
         else {
-            // Get selected answer
+            // Get user selected answer
             const userAnswer = $('input[name="options-list"]:checked').val();
 
-            // Check to see if no answer is selected
+            // Only run if answer is selected
             if (userAnswer !== undefined) {
-                clearQuiz();
-                changeImage(question.answerImage);
-                changeAnswerOptions(`Correct Answer: ${question.answer}\n<br>\nYour Answer: ${userAnswer}`);
-                changeProgressText();
-
+                // Set render variables
+                clear = true;
+                imageName = question.answerImage;
+                imageAlt = question.answerImageAlt;
+                answerOptions = `Correct Answer: ${question.answer}\n<br>\nYour Answer: ${userAnswer}`;
+                incrementCounter = true;
+                
+                // Show message for correct answer
                 if (checkAnswer(userAnswer, question.answer)) {
-                    // Show correct message
-                    changeAnswerStatus(true);
+                    answerStatus = true;
                     // Increase score
                     quizScore += 1;
                 }
+                // Show message for incorrect answer
                 else {
-                    // Show correct message
-                    changeAnswerStatus(false);
+                    answerStatus = false; // Delete this section?
                 }
 
-                changeScoreText();
+                // Set button text for end of quiz or middle of quiz
                 if (quizCounter === 10) {
-                    changeButtonText('Finish Quiz');
+                    buttonText = 'Finish Quiz';
                 }
                 else {
-                    changeButtonText('Next Question');
+                    buttonText = 'Next Question';
                 }
-                //console.log(userAnswer);
-            
-                quizCounter++;
             }
+            // Handle the case where no answer is selected
             else {
-                // Handle the case where no answer is selected
-                clearQuiz();
-                changeImage(question.questionImage);
-                changeAnswerOptions('Please select an answer');
-                changeButtonText('Try Again');
-                changeProgressText();
-                changeScoreText();
+                clear = true;
+                answerOptions = 'Please select an answer';
+                displayProgress = false;
+                displayScore = false;
+                buttonText = 'Try Again';
             }
         }
         // Toggle isQuestion tracking variable
-        isQuestion = (isQuestion) ? false : true;        
+        isQuestion = (isQuestion) ? false : true;
     }
+    // Render everything
+    clearQuiz(clear);
+    changeImage(imageName, imageAlt);
+    changeQuestionText(questionText);
+    changeAnswerOptions(answerOptions);
+    changeAnswerStatus(answerStatus);
+    changeProgressText(displayProgress);
+    changeScoreText(displayScore);
+    changeButtonText(buttonText);
+
+    // Increment quizCounter if moving on to next question
+    if (incrementCounter) quizCounter++;
 
 }
 
 function changeImage(imageName, imageAlt) {
     // This function will change the image for each question and after a question has been answered
     console.log('`changeImage` ran');
+
     const image = $('#js-quiz-image');
     image.attr('src', 'images/' + imageName);
     image.attr('alt', imageAlt);
@@ -108,6 +139,7 @@ function changeImage(imageName, imageAlt) {
 function changeQuestionText(questionText) {
     // This function will change the question text for each question
     console.log('`changeQuestionText` ran');
+
     const text = $('#js-quiz-text');
     text.append('<p>' + questionText + '</p>');
 }
@@ -115,8 +147,11 @@ function changeQuestionText(questionText) {
 function changeAnswerOptions(quizOptions) {
     // This function will change the list of answer options
     console.log('`listAnswerOptions` ran');
+
+    // Start with empty string and build from there
     let optionString = '';
-    // If quizOptions is array, build options list
+
+    // If quizOptions is array, build options list using fieldset, radio inputs, labels
     if (Array.isArray(quizOptions)) {
         optionString += '    <fieldset>';
         for (let i = 0; i < quizOptions.length; i++) {
@@ -129,68 +164,102 @@ function changeAnswerOptions(quizOptions) {
     }
     // Otherwise, build answer string (in the case of the feedback page)
     else {
-        /*
-        NEED TO ADD BETTER STRING: 'Correct Answer: Answer, Your Answer: Answer'
-        */
         optionString += `    <p class="answer">${quizOptions}</p>`
     }
-    console.log(optionString);
+    
+    // Hook into options element and add the options text
     const optionsContainer = $('#js-quiz-options');
     optionsContainer.append(optionString);
 }
 
 function changeAnswerStatus(correct) {
+    // This function will change the answer status (correct/incorrect) and assign the proper class
+    // to have the right style
+    console.log('`listAnswerOptions` ran');
+
+    // Hook into answer status element
     const quizAnswerStatus = $('#js-answer-status');
-    if (correct) {
+
+    // Only run if correct has been set properly
+    if (correct !== null) {
         // Answer correct, add proper class, correct message
-        quizAnswerStatus.removeClass().addClass('answer-status-correct');
-        quizAnswerStatus.text('You got it right!');
-    }
-    else {
+        if (correct) {
+            quizAnswerStatus.removeClass().addClass('answer-status-correct');
+            quizAnswerStatus.text('You got it right!');
+        }
         // Answer incorrect, add proper class, incorrect message
-        quizAnswerStatus.removeClass().addClass('answer-status-incorrect');
-        quizAnswerStatus.text('You got it wrong.');
+        else {
+            quizAnswerStatus.removeClass().addClass('answer-status-incorrect');
+            quizAnswerStatus.text('You got it wrong.');
+        }
     }
 }
 
-function changeProgressText() {
-    const progressText = $('#js-quiz-progress');
-    progressText.append(`Question: ${quizCounter} of 10`);
+function changeProgressText(display) {
+    // This function will show the quiz progress if display is true
+    console.log('`changeProgressText` ran');
+
+    if (display) {
+        const progressText = $('#js-quiz-progress');
+        progressText.append(`Question: ${quizCounter} of 10`);
+    }
 }
 
-function changeScoreText() {
-    const scoreText = $('#js-quiz-score');
-    scoreText.append(`Score: ${quizScore} out of 10`);
+function changeScoreText(display) {
+    // This function will show the quiz score if display is true
+    console.log('`changeScoreText` ran');
+
+    if (display) {
+        const scoreText = $('#js-quiz-score');
+        // Show proper possible score: use question number when on question page,
+        // question number minus one on answer page
+        if (isQuestion) {
+            scoreText.append(`Score: ${quizScore} out of ${quizCounter}`);
+        }
+        else {
+            scoreText.append(`Score: ${quizScore} out of ${quizCounter - 1}`);
+        }
+    }
 }
 
 function checkAnswer(userAnswer, questionAnswer) {
-    // This function will check the submitted answer and display feedback
+    // This function will check the user answer against the correct answer and return the result
     console.log('`checkAnswer` ran');
 
     return (userAnswer === questionAnswer);
 }
 
 function changeButtonText(buttonText) {
+    // This function will change the text of the quiz button to buttonText
+    console.log('`changeButtonText` ran');
+
     const button = $('#js-button-text');
     button.text(buttonText);
 }
 
-function clearQuiz() {
-    const quizText = $('#js-quiz-text');
-    const quizOptions = $('#js-quiz-options');
-    const quizAnswerStatus = $('#js-answer-status');
-    const quizProgress = $('#js-quiz-progress');
-    const quizScore = $('#js-quiz-score');
-    const quizButton = $('#js-button-text');
-    quizText.empty();
-    quizOptions.empty();
-    quizAnswerStatus.empty();
-    quizProgress.empty();
-    quizScore.empty();
-    quizButton.empty();
+function clearQuiz(clear) {
+    // This function will clear out the text of all elements of the quiz
+    console.log('`clearQuiz` ran');
+
+    // Only run if called properly
+    if (clear) {
+        const quizText = $('#js-quiz-text');
+        const quizOptions = $('#js-quiz-options');
+        const quizAnswerStatus = $('#js-answer-status');
+        const quizProgress = $('#js-quiz-progress');
+        const quizScore = $('#js-quiz-score');
+        const quizButton = $('#js-button-text');
+        quizText.empty();
+        quizOptions.empty();
+        quizAnswerStatus.empty();
+        quizProgress.empty();
+        quizScore.empty();
+        quizButton.empty();
+    }
 }
 
-let quizCounter = 10;
+// Declare and set global tracking variables, question list
+let quizCounter = 0;
 let quizScore = 0;
 let isQuestion = true;
 const questionList = [
@@ -201,7 +270,9 @@ const questionList = [
         ],
         answer: '',
         questionImage: 'futurama_square.png',
-        answerImage: ''
+        questionImageAlt: 'Futurama crew standing under the stylized title',
+        answerImage: '',
+        answerImageAlt: ''
     },
     {
         id: 1,
@@ -214,7 +285,9 @@ const questionList = [
         ],
         answer: 'Fry',
         questionImage: 'cryo_tube.png',
-        answerImage: 'fry.png'
+        questionImageAlt: 'Character frozen inside cryo-tube while a city is destroyed through the window',
+        answerImage: 'fry.png',
+        answerImageAlt: 'Headshot of fry'
     },
     {
         id: 2,
@@ -227,7 +300,9 @@ const questionList = [
         ],
         answer: 'Zoidberg',
         questionImage: 'decapod_10.png',
-        answerImage: 'zoidberg.png'
+        questionImageAlt: 'Decapod 10 seen from space',
+        answerImage: 'zoidberg.png',
+        answerImageAlt: 'Headshot of Zoidberg'
     },
     {
         id: 3,
@@ -240,7 +315,9 @@ const questionList = [
         ],
         answer: 'New New York',
         questionImage: 'planet_express_building.png',
-        answerImage: 'nny.png'
+        questionImageAlt: 'Planet Express building with city in the background',
+        answerImage: 'nny.png',
+        answerImageAlt: 'New New York Public Library as the brains are attacking'
     },
     {
         id: 4,
@@ -253,7 +330,9 @@ const questionList = [
         ],
         answer: 'Popplers',
         questionImage: 'popplers.png',
-        answerImage: 'fishy_joes.png'
+        questionImageAlt: 'Fry and Bender looking at a hole full of alien snacks',
+        answerImage: 'fishy_joes.png',
+        answerImageAlt: 'Fishy Joe\'s billboard advertising billions of Popplers sold'
     },
     {
         id: 5,
@@ -266,7 +345,9 @@ const questionList = [
         ],
         answer: 'Nibbler',
         questionImage: 'nibbler.png',
-        answerImage: 'lord_nibbler.png'
+        questionImageAlt: 'Leela\'s pet sitting in a diaper, wearing a cape',
+        answerImage: 'lord_nibbler.png',
+        answerImageAlt: 'Nibbler wearing a space suit, looking serious'
     },
     {
         id: 6,
@@ -279,7 +360,9 @@ const questionList = [
         ],
         answer: 'Atlanta',
         questionImage: 'underwater_city.png',
-        answerImage: 'atlanta.png'
+        questionImageAlt: 'Underwater city from afar',
+        answerImage: 'atlanta.png',
+        answerImageAlt: 'Leela clearing a sign that reveals Atlanta as the city name'
     },
     {
         id: 7,
@@ -292,7 +375,9 @@ const questionList = [
         ],
         answer: 'The Moon',
         questionImage: 'amusement_park.png',
-        answerImage: 'luna_park.png'
+        questionImageAlt: 'Bird\'s eye view of space amusement park under a dome',
+        answerImage: 'luna_park.png',
+        answerImageAlt: 'People waiting in line to get into Luna Park on the Moon'
     },
     {
         id: 8,
@@ -305,7 +390,9 @@ const questionList = [
         ],
         answer: 'Buggalo',
         questionImage: 'livestock.png',
-        answerImage: 'betsy.png'
+        questionImageAlt: 'Leela and fry milking black and white, large, beetle-like creatures',
+        answerImage: 'betsy.png',
+        answerImageAlt: 'Amy running toward her pet Buggalo, Betsy, with Buggalo herd in background'
     },
     {
         id: 9,
@@ -318,7 +405,9 @@ const questionList = [
         ],
         answer: 'Chapek 9',
         questionImage: 'lug_nut_planet.png',
-        answerImage: 'got_milk.png'
+        questionImageAlt: 'Mysterious planet from space',
+        answerImage: 'got_milk.png',
+        answerImageAlt: 'Billboard from Chapek 9, indicating that humans must be killed'
     },
     {
         id: 10,
@@ -331,7 +420,9 @@ const questionList = [
         ],
         answer: 'Ass',
         questionImage: 'bender.png',
-        answerImage: 'bender_bottom.png'
+        questionImageAlt: 'Headshot of Bender',
+        answerImage: 'bender_bottom.png',
+        answerImageAlt: 'Bender showing off his newly installed shock absorbing ass'
     },
     {
         id: 11,
@@ -340,21 +431,30 @@ const questionList = [
         ],
         answer: '',
         questionImage: 'futurama_square.png',
-        answerImage: ''
+        questionImageAlt: '',
+        answerImage: '',
+        answerImageAlt: ''
     }
 ];
 
 function startQuiz() {
-    // Do intial render to show quiz start page. Grab content from question list.
+    // This function will start the quiz and listen for form submissions to progress through the quiz
+    console.log('`startQuiz` ran');
+
+    // Grab content from question list. Do intial render to show quiz start page.
     let question = selectQuestion(quizCounter);    
     renderQuiz(question);
 
-    // Listen for submit button click to work through quiz
+    // Listen for submit button click to progress through quiz
     $('#js-quiz-container').submit(function (event) {
-    //$('.quiz-button').on('click', function (event) {
+        // Stop standard form submittal
         event.preventDefault();
         console.log('Button clicked');
+        
+        // Get new question from question list
         question = selectQuestion(quizCounter);
+
+        // Render the quiz
         renderQuiz(question);
     });
 
