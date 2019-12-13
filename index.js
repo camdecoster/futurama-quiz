@@ -201,7 +201,7 @@ function changeProgressText(display) {
 
     if (display) {
         const progressText = $('#js-quiz-progress');
-        progressText.append(`Question: ${quizCounter} of 10`);
+        progressText.text(`Question: ${quizCounter} of 10`);
     }
 }
 
@@ -214,10 +214,10 @@ function changeScoreText(display) {
         // Show proper possible score: use question number when on question page,
         // question number minus one on answer page
         if (isQuestion) {
-            scoreText.append(`Score: ${quizScore} out of ${quizCounter}`);
+            scoreText.text(`Score: ${quizScore} out of ${quizCounter}`);
         }
         else {
-            scoreText.append(`Score: ${quizScore} out of ${quizCounter - 1}`);
+            scoreText.text(`Score: ${quizScore} out of ${quizCounter - 1}`);
         }
     }
 }

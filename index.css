@@ -9,10 +9,9 @@ body, html {
 }
 
 body {
-  /* Make the scroll bars disappear */
-  overflow: hidden;
   background-image: url('images/planet-express-background.jpg');
   background-position: center;
+  background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat;
   font-size: 18px;  
@@ -99,7 +98,12 @@ header {
   background-color: lightcoral;
 }
 
-.quiz-progress {
+.quiz-progress, .quiz-score {
+  display: inline;
+  margin: 0;
+}
+
+.quiz-progress {  
   position: absolute;
   left: 0;
   bottom: 0;
